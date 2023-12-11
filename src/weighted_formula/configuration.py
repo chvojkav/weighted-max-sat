@@ -28,6 +28,14 @@ class Configuration:
         self._variable_cnt = other._variable_cnt
         self.variable_evaluation = deepcopy(other.variable_evaluation)
 
+    def set_variable(self, variable_name: int, value: bool):
+        new_val = abs(variable_name)
+        if not value:
+            new_val *= -1
+        
+        self.variable_evaluation[variable_name] = new_val
+        self.variable_evaluation[-variable_name] = new_val
+
     def flip_variable(self, variable_name: int):
         self.variable_evaluation[variable_name] *= -1
         self.variable_evaluation[-variable_name] *= -1
