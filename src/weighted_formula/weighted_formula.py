@@ -16,3 +16,4 @@ class WeightedCnf:
             self.cnf += ((clause, i),)
         
         self.clause_cnt = i + 1
+        self.variable_cnt = len(weights)
