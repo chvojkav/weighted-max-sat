@@ -1,3 +1,4 @@
+from random import sample
 from typing import Iterable
 from numpy import mean, median
 
@@ -17,12 +18,15 @@ class Population:
         return len(self.individuals)
     
     @property
-    def fittest(self) -> int:
+    def fittest(self) -> float:
         return self.individuals[0].fitness()
     
     @property
-    def least_fit(self) -> int:
+    def least_fit(self) -> float:
         return self.individuals[-1].fitness()
+    
+    def random_sample(self, sample_size: int = 1) -> Iterable[Individual]:
+        return sample(self.individuals, sample_size)
 
     def get_elites(self, how_many: int = 1) -> list[Individual]:
         return self.individuals[:how_many]
