@@ -40,23 +40,26 @@ def genetic_algorithm(individual_generator: Callable[[], Individual],
 
     population = Population([individual_generator() for _ in range(population_size * INITIAL_GENERATION_MULTIPLIER)])
 
-    for i in range(number_of_generations):
-        elites = list(population.get_elites(how_many=elitism))
-        selected = list(selection(population, population_size - elitism))
-        
-        if debug_stream is not None:
-            dp = Population(elites + selected)
-            debug_stream.write(f"{i},{dp.fittest},{dp.mean},{dp.median},{dp.least_fit}\n")
+    try:
+        for i in range(number_of_generations):
+            elites = list(population.get_elites(how_many=elitism))
+            selected = list(selection(population, population_size - elitism))
+            
+            if debug_stream is not None:
+                dp = Population(elites + selected)
+                debug_stream.write(f"{i},{dp.fittest},{dp.mean},{dp.median},{dp.least_fit}\n")
 
-        newborns = []
-        if crossover_probability > 0:
-            newborns = _breed(elites + selected, crossover_probability)
-        
-        mutable_individuals = selected + newborns  # Don't mutate elites.
-        if mutation_rate > 0:
-            mutable_individuals = _mutate(mutable_individuals, mutation_rate)
-        
-        population = Population(elites + mutable_individuals)
+            newborns = []
+            if crossover_probability > 0:
+                newborns = _breed(elites + selected, crossover_probability)
+            
+            mutable_individuals = selected + newborns  # Don't mutate elites.
+            if mutation_rate > 0:
+                mutable_individuals = _mutate(mutable_individuals, mutation_rate)
+            
+            population = Population(elites + mutable_individuals)
+    except KeyboardInterrupt:
+        pass
 
     return next(iter(population.get_elites(1)))
 
