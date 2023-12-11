@@ -28,5 +28,5 @@ class Population:
     def random_sample(self, sample_size: int = 1) -> Iterable[Individual]:
         return sample(self.individuals, sample_size)
 
-    def get_elites(self, how_many: int = 1) -> list[Individual]:
+    def get_elites(self, how_many: int = 1) -> Iterable[Individual]:
         return self.individuals[:how_many]
