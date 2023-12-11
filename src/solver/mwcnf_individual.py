@@ -3,7 +3,7 @@ from genetic_algorithm.individual import Individual
 from weighted_formula.configuration import Configuration
 from weighted_formula.weighted_formula import WeightedCnf
 
-from .metrics import configuration_metric_t
+from .fitness import fitness_strategy_t
 from .crossover import crossover_strategy_t
 from .mutation import mutation_strategy_t
 
@@ -12,7 +12,7 @@ class MwcnfIndividual(Individual):
     def __init__(self,
                  formula: WeightedCnf,
                  config: Configuration,
-                 fitness_getter: configuration_metric_t,
+                 fitness_getter: fitness_strategy_t,
                  breeder: crossover_strategy_t,
                  mutator: mutation_strategy_t) -> None:
         super().__init__()
