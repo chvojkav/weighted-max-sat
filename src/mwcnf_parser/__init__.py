@@ -1,1 +1,1 @@
-from .mwcnf_parser import parse_mwcnf
+from .mwcnf_parser import *
