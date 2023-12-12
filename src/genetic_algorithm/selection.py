@@ -1,6 +1,5 @@
+from random import random
 from typing import Callable, Iterable
-from numpy import floor
-from numpy.random import choice
 
 from .individual import Individual
 from .population import Population
@@ -17,15 +16,16 @@ class TournamentSelection:
         self.tournament_size = tournament_size
         self.base_round_size = int(self.tournament_size)
         self.plus_one_prob = self.tournament_size - self.base_round_size
-        self.plus_zero_prob = 1 - self.plus_one_prob
     
     def __call__(self, population: Population, target_size: int) -> list[Individual]:
         assert target_size >=0
 
         selected_population = []
         for _ in range(target_size):
-            round_size = self.base_round_size + \
-                            choice([0, 1], 1, p=[self.plus_zero_prob, self.plus_one_prob])[0]
+            round_size = self.base_round_size
+            if random() < self.plus_one_prob:
+                round_size += 1
+
             tournament_participants = population.random_sample(round_size)
             best = min(tournament_participants)
             selected_population.append(best)
