@@ -38,7 +38,8 @@ def genetic_algorithm(individual_generator: Callable[[], Individual],
     assert 0 <= mutation_rate <= 1
     assert 0 <= elitism <= population_size
 
-    population = Population([individual_generator() for _ in range(population_size * INITIAL_GENERATION_MULTIPLIER)])
+    population = Population([individual_generator() for _ in range(population_size * INITIAL_GENERATION_MULTIPLIER)],
+                            expected_elitism=elitism)
 
     try:
         for i in range(number_of_generations):
@@ -46,7 +47,7 @@ def genetic_algorithm(individual_generator: Callable[[], Individual],
             selected = list(selection(population, population_size - elitism))
             
             if debug_stream is not None:
-                dp = Population(elites + selected)
+                dp = Population(elites + selected, expected_elitism=0)
                 debug_stream.write(f"{i},{dp.fittest},{dp.mean},{dp.median},{dp.least_fit}\n")
 
             newborns = []
@@ -57,7 +58,7 @@ def genetic_algorithm(individual_generator: Callable[[], Individual],
             if mutation_rate > 0:
                 mutable_individuals = _mutate(mutable_individuals, mutation_rate)
             
-            population = Population(elites + mutable_individuals)
+            population = Population(elites + mutable_individuals, expected_elitism=elitism)
     except KeyboardInterrupt:
         pass
 
