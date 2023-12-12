@@ -1,6 +1,7 @@
 from random import choices, shuffle
 from typing import Callable, Iterable, TextIO
 from more_itertools import grouper
+from numpy import mean, median
 
 from genetic_algorithm.individual import Individual
 from genetic_algorithm.population import Population
@@ -47,8 +48,8 @@ def genetic_algorithm(individual_generator: Callable[[], Individual],
             selected = list(selection(population, population_size - elitism))
             
             if debug_stream is not None:
-                dp = Population(elites + selected, expected_elitism=0)
-                debug_stream.write(f"{i},{dp.fittest},{dp.mean},{dp.median},{dp.least_fit}\n")
+                fits = [individual.fitness() for individual in elites + selected]
+                debug_stream.write(f"{i},{min(fits)},{mean(fits)},{median(fits)},{max(fits)}\n")
 
             newborns = []
             if crossover_probability > 0:
