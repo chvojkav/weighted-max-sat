@@ -48,7 +48,7 @@ def weigted_penalized_satisfied_clause_count(cnf: WeightedCnf, config: Configura
     # Log weight to make number of satisfied clauses more important.
     adjusted_weight = weight_sum
     adjusted_weight = sqrt(adjusted_weight)
-    # adjusted_weight = log(adjusted_weight)
+    adjusted_weight = log(adjusted_weight)
 
     weighted_fitness = sat_cnt * adjusted_weight
     # weighted_fitness = adjusted_weight
