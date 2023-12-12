@@ -45,3 +45,6 @@ class MwcnfIndividual(Individual):
         ret.config = new_config
         ret._fitness = None
         return ret
+    
+    def __repr__(self) -> str:
+        return f"MI(fit={self.fitness():.3f})"
