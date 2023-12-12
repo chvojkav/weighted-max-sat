@@ -1,4 +1,4 @@
-from random import choices, shuffle
+from random import random, shuffle
 from typing import Callable, Iterable, TextIO
 from more_itertools import grouper
 from numpy import mean, median
@@ -73,7 +73,7 @@ def _breed(fertile_population: list[Individual],
 
     to_breed: list[Individual] = []
     for individual in fertile_population:
-        if choices([True, False], cum_weights=[crossover_probability, 1]):
+        if random() < crossover_probability:
             to_breed.append(individual)
     
     couples = list(grouper(to_breed, 2))
@@ -90,7 +90,7 @@ def _mutate(mutable_population: Iterable[Individual],
             mutation_rate: float) -> list[Individual]:
     new_population = []
     for individual in mutable_population:
-        if choices([True, False], cum_weights=[mutation_rate, 1]):
+        if random() < mutation_rate:
             new_population.append(individual.mutate())
         else:
             new_population.append(individual)
