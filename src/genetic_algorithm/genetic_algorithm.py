@@ -8,10 +8,6 @@ from genetic_algorithm.population import Population
 from .selection import TournamentSelection, selection_t
 
 
-# To increase initial diversity.
-INITIAL_GENERATION_MULTIPLIER = 5
-
-
 def genetic_algorithm(individual_generator: Callable[[], Individual], 
                       population_size: int,
                       number_of_generations: int,
@@ -39,7 +35,7 @@ def genetic_algorithm(individual_generator: Callable[[], Individual],
     assert 0 <= mutation_rate <= 1
     assert 0 <= elitism <= population_size
 
-    population = Population([individual_generator() for _ in range(population_size * INITIAL_GENERATION_MULTIPLIER)],
+    population = Population([individual_generator() for _ in range(population_size)],
                             expected_elitism=elitism)
 
     try:
