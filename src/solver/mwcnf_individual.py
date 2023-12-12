@@ -19,25 +19,29 @@ class MwcnfIndividual(Individual):
         self.formula = formula
         self.config = config
         self.fitness_getter = fitness_getter
+        self._fitness = None
         self.breeder = breeder
         self.mutator = mutator
     
     def fitness(self) -> float:
         """Posifive number. The less, the better."""
-        return self.fitness_getter(self.formula, self.config)
+        if self._fitness == None:
+            self._fitness = self.fitness_getter(self.formula, self.config)
+        
+        return self._fitness 
     
     def mutate(self) -> "Individual":
-        mutant = copy(self)
-        mutant.config = self.mutator(self.formula, self.config)
-        return mutant
+        return self.copy(new_config=self.mutator(self.formula, self.config))
     
     def breed(self, other: "Individual") -> tuple["Individual", "Individual"]:
         if not isinstance(other, MwcnfIndividual):
             raise TypeError
 
         new_configs = self.breeder(self.formula, self.config, other.config)
-        offspring = (copy(self), copy(other))
-        offspring[0].config = new_configs[0]
-        offspring[1].config = new_configs[1]
-        
-        return offspring
+        return self.copy(new_configs[0]), other.copy(new_configs[1])
+    
+    def copy(self, new_config: Configuration) -> "Individual":
+        ret = copy(self)
+        ret.config = new_config
+        ret._fitness = None
+        return ret
