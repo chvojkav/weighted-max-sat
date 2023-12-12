@@ -51,11 +51,12 @@ def genetic_algorithm(individual_generator: Callable[[], Individual],
             if crossover_probability > 0:
                 newborns = _breed(elites + selected, crossover_probability)
             
-            mutable_individuals = selected + newborns  # Don't mutate elites.
+            mutants = []
             if mutation_rate > 0:
-                mutable_individuals = _mutate(mutable_individuals, mutation_rate)
+                mutants = _mutate(selected + newborns + elites, mutation_rate)
             
-            population = Population(elites + mutable_individuals, expected_elitism=elitism)
+            population = Population(elites + selected + newborns + mutants,
+                                    expected_elitism=elitism)
     except KeyboardInterrupt:
         pass
 
@@ -82,13 +83,11 @@ def _breed(fertile_population: list[Individual],
     return offspring
 
 
-def _mutate(mutable_population: Iterable[Individual],
+def _mutate(population: Iterable[Individual],
             mutation_rate: float) -> list[Individual]:
-    new_population = []
-    for individual in mutable_population:
+    mutants = []
+    for individual in population:
         if random() < mutation_rate:
-            new_population.append(individual.mutate())
-        else:
-            new_population.append(individual)
+            mutants.append(individual.mutate())
 
-    return new_population
+    return mutants

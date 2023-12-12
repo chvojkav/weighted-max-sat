@@ -1,5 +1,5 @@
 from copy import deepcopy
-from random import randrange
+from random import random
 from typing import Callable
 
 from weighted_formula.configuration import Configuration
@@ -13,8 +13,10 @@ def flip_random_variable(unused: WeightedCnf,
                          config: Configuration) -> Configuration:
     _ = unused
 
-    random_variable = randrange(config._variable_cnt)
     mutant = deepcopy(config)
-    mutant.flip_variable(random_variable)
+    bit_mutation_threshold = 1 / config._variable_cnt
+    for var in range(1, config._variable_cnt + 1):
+        if random() < bit_mutation_threshold:
+            mutant.flip_variable(var)
 
     return mutant
