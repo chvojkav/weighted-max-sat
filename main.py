@@ -12,7 +12,7 @@ def main():
     parser = ArgumentParser()
     parser.add_argument("--formula_file")
     parser.add_argument("--population_size",
-                        default=200)
+                        default=100)
     parser.add_argument("--generation_cnt",
                         default=1000)
     parser.add_argument("--tournament_size",
@@ -23,20 +23,24 @@ def main():
                         default=0.03)
     parser.add_argument("--elitism",
                         default=1)
+    parser.add_argument("--debug_to_stderr",
+                        action="store_true",
+                        default=False)
     args = parser.parse_args(argv[1:])
 
     formula_path = Path(args.formula_file)
     formula = parse_mwcnf(formula_path)
-    solution = genetic_algorithm(MwcnfGenerator(formula),
-                                 population_size=args.population_size,
-                                 number_of_generations=args.generation_cnt,
-                                 selection=TournamentSelection(args.tournament_size),
-                                 crossover_probability=args.crossover_probability,
-                                 mutation_rate=args.mutation_rate,
-                                 elitism=args.elitism,
-                                 debug_stream=stderr)
+    solution, i = genetic_algorithm(MwcnfGenerator(formula),
+                                    population_size=args.population_size,
+                                    number_of_generations=args.generation_cnt,
+                                    selection=TournamentSelection(args.tournament_size),
+                                    crossover_probability=args.crossover_probability,
+                                    mutation_rate=args.mutation_rate,
+                                    elitism=args.elitism,
+                                    debug_stream=stderr if args.debug_to_stderr else None)
 
     if isinstance(solution, MwcnfIndividual):
+        print(f"Number of generations: {i}")
         print(f"Number satisfied: {-satisfied_clause_count(formula, solution.config)}")
         print(f"{formula_path.name} {-weights(formula, solution.config)} {solution.config.get_evaluation()} 0")
 

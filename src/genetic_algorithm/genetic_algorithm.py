@@ -15,7 +15,7 @@ def genetic_algorithm(individual_generator: Callable[[], Individual],
                       crossover_probability: float = 0.9,
                       mutation_rate: float = 0.01,
                       elitism: int = 1,
-                      debug_stream: TextIO | None = None) -> Individual:
+                      debug_stream: TextIO | None = None) -> tuple[Individual, int]:
     """Runs a round of a genetic algorithm.
     
     :param individual_generator: Callable returning (possibly random) Individuals. Used to generate the initial population.
@@ -27,7 +27,7 @@ def genetic_algorithm(individual_generator: Callable[[], Individual],
     :param elitism: How many best individuals are copied from previous generation to the new one. Note that the greater elitism is the fewer new individuals are created. 0 <= int <= population_size
     :param debug_stream: IO stream for debug statistics about population.
     
-    :returns: The fittest individual in the last generation.
+    :returns: The fittest individual in the last generation, and the number of generations.
     """
     assert population_size > 0
     assert number_of_generations >= 0
@@ -35,6 +35,7 @@ def genetic_algorithm(individual_generator: Callable[[], Individual],
     assert 0 <= mutation_rate <= 1
     assert 0 <= elitism <= population_size
 
+    i = 0
     population = Population([individual_generator() for _ in range(population_size)],
                             expected_elitism=elitism)
 
@@ -60,7 +61,7 @@ def genetic_algorithm(individual_generator: Callable[[], Individual],
     except KeyboardInterrupt:
         pass
 
-    return next(iter(population.get_elites(1)))
+    return next(iter(population.get_elites(1))), i
 
 
 def _breed(fertile_population: list[Individual],
