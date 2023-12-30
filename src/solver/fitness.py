@@ -45,19 +45,15 @@ def weigted_penalized_satisfied_clause_count(cnf: WeightedCnf, config: Configura
         if config.evaluate_variable(i):
             weight_sum += weight
 
-    teoretical_max_weight = sum(cnf.weights)
+    teoretical_max_weight = cnf.weights_sum
 
-    # Log weight to make number of satisfied clauses more important.
-    adjusted_weight = (weight_sum / teoretical_max_weight) * cnf.clause_cnt / 4 
-    # adjusted_weight = sqrt(adjusted_weight)
-    # adjusted_weight = log(adjusted_weight)
+    adjusted_weight = weight_sum / teoretical_max_weight
 
     weighted_fitness = sat_cnt + adjusted_weight
-    # weighted_fitness = adjusted_weight
 
-    penalized_fitness = weighted_fitness * (1 if sat_cnt == len(cnf.cnf) else 0.05)
+    penalized_fitness = weighted_fitness
 
-    # The algorithm is minimazing, so we need to return maximum value.
+    # The algorithm is minimazing, so we need to return negative value.
     return -penalized_fitness
 
 
