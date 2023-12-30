@@ -4,12 +4,13 @@ Za jazyk jsem si zvolil python. Dobře se v něm orientuji, algoritmus mit tak p
 
 Naimplementoval jsem parser MWCNF formulí - src/mwcnf_parser a src/weighted_formula
 Naimplementoval jsem vlastní genetický algoritmus, který je obecně aplikovatelný - src/genetic_algorithm
-    Je potřeba mu dodat:
-    - generátor nových náhodných jedinců
+    K tomu jsem udělal jednu selekční strategii - Turnaj.
+    Je potřeba dodat (specifické od problému, který se řeší):
+    - generátor nových náhodných jedinců (Použit pro vygenerování počáteční populace)
     - jedinci musejí umět vrátit svoji fitness a být schopni se mezi sebou porovnávat.
     - jedinci se musejí umět mezi sebou křížit
     - jedinci se musejí umět zmutovat
-Naimplementoval jsem požadované strategie (mutace, křížení, etc.) pro genetický algoritmus - src/solver
+Naimplementoval jsem jedincům požadované strategie (mutace, křížení, etc.) pro genetický algoritmus - src/solver
 Vytvořil jsem CLI utilitu pro řešení MWCNF - main.py
     potřebuje stále zadat hyperparametry a není tedy zase tak užitečná. 
 
@@ -27,6 +28,20 @@ Tady jsem se trochu zasekl. Nemohl jsem přijít na robustní fitness funkci. Pa
 
 6. maximalizece (počet splněných + adjusted_weight) - Tady už se daří konzistentně nacházet řešení i u instancí označených jako zavádějící. S touto fitness funkcí jsem spokojen. Daří se nalést alespoň nějaké řešení, a zároveň zohledňuje váhy při shodném počtu splněných klauzulí.
 
-Nalezení dobrých parametrů v závislosti na instanci:
+Nalezení parametrů genetického algoritmu:
 Co chceme?
-    funkci, která má na vstupu instanci mwcnf a na výstupu optimální parametry
+    funkci, která má na vstupu instanci MWCNF a na výstupu optimální parametry
+Jaké jsou parametry instance?
+    1. počet proměnných
+    2. počet klauzulí
+    3. součet vah
+    ...
+Jaké jsou parametry genetického algoritmu?
+    1. Počet jedinců
+    2. Počet generací
+    3. Velikost turnaje (mnou zvolená selekční strategie)
+    4. Pravděpodobnost křížení
+    5. Pravděpodobnost mutace
+    6. Elitismus
+
+
