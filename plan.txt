@@ -1,0 +1,32 @@
+Algorimtus a implementace:
+--------------------------
+Za jazyk jsem si zvolil python. Dobře se v něm orientuji, algoritmus mit tak půjde napsat a odladit rychle. Zároveň python obsahuje knihovny pro práci s daty a jejich vyhodnocování, a knihovny pro vykreslování grafů. 
+
+Naimplementoval jsem parser MWCNF formulí - src/mwcnf_parser a src/weighted_formula
+Naimplementoval jsem vlastní genetický algoritmus, který je obecně aplikovatelný - src/genetic_algorithm
+    Je potřeba mu dodat:
+    - generátor nových náhodných jedinců
+    - jedinci musejí umět vrátit svoji fitness a být schopni se mezi sebou porovnávat.
+    - jedinci se musejí umět mezi sebou křížit
+    - jedinci se musejí umět zmutovat
+Naimplementoval jsem požadované strategie (mutace, křížení, etc.) pro genetický algoritmus - src/solver
+Vytvořil jsem CLI utilitu pro řešení MWCNF - main.py
+    potřebuje stále zadat hyperparametry a není tedy zase tak užitečná. 
+
+Whitebox:
+---------
+Hledání fitness funkce:
+
+1. minimalizace počet nesplněných klauzulí - nezohledňuje váhy
+2. maximalizace (počet splněných x váhy) - váhy mají moc velkou váhu, formule často není v poskytnutém ohodnocení splněná
+3. maximalizace (počet splněných x sqrt(váhy)) - lepší než 2., ale stejně často nenajde řešení
+4. maximalizace (počet splněných x ln(váhy)) - pro malé nezavádějící instance najde řešení, a často i optimální. Pro větší nebo zavádějící instance bohužel často nenajde řešení nebo spadne do lokálního maxima.
+5. maximalizace (počet splněných x ln(sqrt(váhy))) - stejný problém jako u 4., ale chtěl jsem to vyzkoušet.
+
+Tady jsem se trochu zasekl. Nemohl jsem přijít na robustní fitness funkci. Pak mi došlo, že aby heristika prioritizovala nalezení řešení před optimalizací vah, musejí mít váhy řádově menší významnost než počet splněných klauzulí. Rozhodl jsem se tedy naškálovat součet vah do intervalu <0;1>, dále jen adjusted_weight (= sum(váhy splněných proměnných) / sum(váhy všech proměnných)).
+
+6. maximalizece (počet splněných + adjusted_weight) - Tady už se daří konzistentně nacházet řešení i u instancí označených jako zavádějící. S touto fitness funkcí jsem spokojen. Daří se nalést alespoň nějaké řešení, a zároveň zohledňuje váhy při shodném počtu splněných klauzulí.
+
+Nalezení dobrých parametrů v závislosti na instanci:
+Co chceme?
+    funkci, která má na vstupu instanci mwcnf a na výstupu optimální parametry
