@@ -87,7 +87,6 @@ def _mutate(population: Iterable[Individual],
             mutation_rate: float) -> list[Individual]:
     mutants = []
     for individual in population:
-        if random() < mutation_rate:
-            mutants.append(individual.mutate())
+        mutants.append(individual.mutate(mutation_rate))
 
     return mutants

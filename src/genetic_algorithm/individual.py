@@ -6,7 +6,7 @@ class Individual:
         """Posifive number. The less, the better."""
         raise NotImplementedError
     
-    def mutate(self) -> "Individual":
+    def mutate(self, p: float) -> "Individual":
         raise NotImplementedError
     
     def breed(self, other: "Individual") -> tuple["Individual", "Individual"]:

@@ -30,8 +30,8 @@ class MwcnfIndividual(Individual):
         
         return self._fitness 
     
-    def mutate(self) -> "Individual":
-        return self.copy(new_config=self.mutator(self.formula, self.config))
+    def mutate(self, p: float) -> "Individual":
+        return self.copy(new_config=self.mutator(self.formula, self.config, p))
     
     def breed(self, other: "Individual") -> tuple["Individual", "Individual"]:
         if not isinstance(other, MwcnfIndividual):
