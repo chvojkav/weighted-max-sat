@@ -47,7 +47,12 @@ def weigted_penalized_satisfied_clause_count(cnf: WeightedCnf, config: Configura
 
     teoretical_max_weight = cnf.weights_sum
 
+
     adjusted_weight = weight_sum / teoretical_max_weight
+
+    # This ensures that even all weights together are less important than one satisfied clause
+    adjusted_weight *= 0.9999999
+    assert 0 <= adjusted_weight < 1
 
     weighted_fitness = sat_cnt + adjusted_weight
 
