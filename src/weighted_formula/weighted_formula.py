@@ -10,6 +10,7 @@ weights_t = tuple[int, ...]
 class WeightedCnf:
     def __init__(self, cnf: Iterable[clause3_t], weights: weights_t):
         self.weights: weights_t = weights
+        self.weights_sum = sum(weights)
         self.cnf: cnf_t = tuple()
         i = -1
         for i, clause in enumerate(cnf):
