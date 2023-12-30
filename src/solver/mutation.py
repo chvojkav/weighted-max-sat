@@ -14,9 +14,11 @@ def flip_random_variable(unused: WeightedCnf,
                          mutation_probability: float) -> Configuration:
     _ = unused
 
-    mutant = deepcopy(config)
+    mutant = None
     for var in range(1, config._variable_cnt + 1):
         if random() < mutation_probability:
+            if mutant is None:
+                mutant = deepcopy(config)
             mutant.flip_variable(var)
 
-    return mutant
+    return mutant if mutant is not None else config
