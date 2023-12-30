@@ -46,5 +46,6 @@ class Configuration:
         # Checks if the variable evaluation is in current configuration.
         return variable_name == self.variable_evaluation[variable_name]
     
-    def get_evaluation(self) -> list[int]:
-        return self.variable_evaluation[1 : self._variable_cnt + 1]
+    def get_evaluation(self) -> str:
+        evaluation = self.variable_evaluation[1 : self._variable_cnt + 1]
+        return " ".join(str(eval) for eval in evaluation)
