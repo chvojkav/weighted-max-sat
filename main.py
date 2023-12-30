@@ -37,7 +37,7 @@ def main():
                                  debug_stream=stderr)
 
     if isinstance(solution, MwcnfIndividual):
-        print(f"Number satisfied: {satisfied_clause_count(formula, solution.config)}")
+        print(f"Number satisfied: {-satisfied_clause_count(formula, solution.config)}")
         print(f"{formula_path.name} {-weights(formula, solution.config)} {solution.config.get_evaluation()} 0")
 
 if __name__ == '__main__':
