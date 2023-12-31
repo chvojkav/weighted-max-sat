@@ -11,16 +11,11 @@ mutation_strategy_t = Callable[[WeightedCnf, Configuration, float], Configuratio
 def flip_random_variable(formula: WeightedCnf,
                          config: Configuration,
                          mutation_probability: float) -> Configuration:
-    mutant = None
+    mutant = Configuration(formula)
+    mutant.from_config(config)
+
     for var in range(1, config._variable_cnt + 1):
         if random() < mutation_probability:
-            if mutant is None:
-                mutant = Configuration(formula)
-                mutant.from_config(config)
             mutant.flip_variable(var)
-
-    if mutant is None:
-        mutant = Configuration(formula)
-        mutant.from_config(config)
 
     return mutant
