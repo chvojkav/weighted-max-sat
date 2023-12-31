@@ -1,4 +1,3 @@
-from math import log, sqrt
 from typing import Callable
 from weighted_formula.weighted_formula import WeightedCnf
 from weighted_formula.configuration import Configuration
@@ -31,22 +30,10 @@ def weigted_penalized_satisfied_clause_count(cnf: WeightedCnf, config: Configura
         if sat_literal_cnt != 0:
             sat_cnt += 1
 
-    weight_sum = config.sat_weights_sum
-
-    teoretical_max_weight = cnf.weights_sum
-
-    adjusted_weight = weight_sum / teoretical_max_weight
-
-    # This ensures that even all weights together are less important than one satisfied clause
-    adjusted_weight *= 0.9999999
-    assert 0 <= adjusted_weight < 1
-
-    weighted_fitness = sat_cnt + adjusted_weight
-
-    penalized_fitness = weighted_fitness
+    weighted_fitness = sat_cnt + config.sat_weights_sum / cnf.weights_sum
 
     # The algorithm is minimazing, so we need to return negative value.
-    return -penalized_fitness
+    return -weighted_fitness
 
 
 def weights(cnf: WeightedCnf, config: Configuration) -> float:
