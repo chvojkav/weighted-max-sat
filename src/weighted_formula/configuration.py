@@ -1,5 +1,5 @@
 import random
-from copy import deepcopy
+from copy import copy
 
 
 class Configuration:
@@ -19,14 +19,14 @@ class Configuration:
             self.variable_evaluation.append(evaluation)
         
         # Now copy the evaluation reversed to support negative indexes.
-        cpy = deepcopy(self.variable_evaluation)
+        cpy = copy(self.variable_evaluation)
         cpy.reverse()
         self.variable_evaluation.extend(cpy)
         self.variable_evaluation.pop() # Pop the final 0
     
     def from_config(self, other: "Configuration"):
         self._variable_cnt = other._variable_cnt
-        self.variable_evaluation = deepcopy(other.variable_evaluation)
+        self.variable_evaluation = copy(other.variable_evaluation)
 
     def set_variable(self, variable_name: int, value: bool):
         new_val = abs(variable_name)
