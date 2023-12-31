@@ -1,4 +1,3 @@
-from copy import deepcopy
 from random import random
 from typing import Callable
 
@@ -18,7 +17,12 @@ def flip_random_variable(unused: WeightedCnf,
     for var in range(1, config._variable_cnt + 1):
         if random() < mutation_probability:
             if mutant is None:
-                mutant = deepcopy(config)
+                mutant = Configuration(0)
+                mutant.from_config(config)
             mutant.flip_variable(var)
 
-    return mutant if mutant is not None else config
+    if mutant is None:
+        mutant = Configuration(0)
+        mutant.from_config(config)
+
+    return mutant

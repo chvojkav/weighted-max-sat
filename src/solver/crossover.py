@@ -1,4 +1,3 @@
-from copy import deepcopy
 from random import choice
 from typing import Callable
 from weighted_formula.configuration import Configuration
@@ -15,8 +14,10 @@ def uniform_crossover(unused: WeightedCnf,
                       b: Configuration) -> tuple[Configuration, Configuration]:
     _ = unused
 
-    offspring_a = deepcopy(a)
-    offspring_b = deepcopy(b)
+    offspring_a = Configuration(0)
+    offspring_a.from_config(a)
+    offspring_b = Configuration(0)
+    offspring_b.from_config(b)
     
     for variable in range(1, a._variable_cnt + 1):
         if choice([True, False]):
