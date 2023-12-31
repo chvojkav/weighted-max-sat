@@ -9,44 +9,34 @@ fitness_strategy_t = Callable[[WeightedCnf, Configuration], float]
 
 def unsatisfied_clause_count(cnf: WeightedCnf, config: Configuration) -> float:
     sat_cnt = 0
-    for clause in cnf.cnf:
-        for variable in clause[0]:
-            if config.evaluate_variable(variable):
-                # One literal of clause is satisfied hence whole clause is satisfied.
-                sat_cnt += 1
-                break
-    
+    for sat_literal_cnt in config.counts_of_satisfied_literals:
+        if sat_literal_cnt != 0:
+            sat_cnt += 1
+
     return len(cnf.cnf) - sat_cnt
 
 
 def satisfied_clause_count(cnf: WeightedCnf, config: Configuration) -> float:
     sat_cnt = 0
-    for clause in cnf.cnf:
-        for variable in clause[0]:
-            if config.evaluate_variable(variable):
-                # One literal of clause is satisfied hence whole clause is satisfied.
-                sat_cnt += 1
-                break
-    
+    for sat_literal_cnt in config.counts_of_satisfied_literals:
+        if sat_literal_cnt != 0:
+            sat_cnt += 1
+
     return -sat_cnt
 
 
 def weigted_penalized_satisfied_clause_count(cnf: WeightedCnf, config: Configuration) -> float:
     sat_cnt = 0
-    for clause in cnf.cnf:
-        for variable in clause[0]:
-            if config.evaluate_variable(variable):
-                # One literal of clause is satisfied hence whole clause is satisfied.
-                sat_cnt += 1
-                break
-    
+    for sat_literal_cnt in config.counts_of_satisfied_literals:
+        if sat_literal_cnt != 0:
+            sat_cnt += 1
+
     weight_sum = 0
     for i, weight in enumerate(cnf.weights, start=1):
         if config.evaluate_variable(i):
             weight_sum += weight
 
     teoretical_max_weight = cnf.weights_sum
-
 
     adjusted_weight = weight_sum / teoretical_max_weight
 
@@ -67,5 +57,5 @@ def weights(cnf: WeightedCnf, config: Configuration) -> float:
     for i, weight in enumerate(cnf.weights, start=1):
         if config.evaluate_variable(i):
             weight_sum += weight
-    
+
     return -weight_sum
