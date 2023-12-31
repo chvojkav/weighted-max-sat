@@ -1,3 +1,4 @@
+from math import ceil
 from random import random, shuffle
 from typing import Callable, Iterable, TextIO
 from more_itertools import grouper
@@ -15,6 +16,7 @@ def genetic_algorithm(individual_generator: Callable[[], Individual],
                       crossover_probability: float = 0.9,
                       mutation_rate: float = 0.01,
                       elitism: int = 1,
+                      terminate_on_stagnation_in_x_generations: int | float | None = None,
                       debug_stream: TextIO | None = None) -> tuple[Individual, int]:
     """Runs a round of a genetic algorithm.
     
@@ -25,6 +27,7 @@ def genetic_algorithm(individual_generator: Callable[[], Individual],
     :param crossover_probability: Probability that individual goes into crossover. 0 <= float <= 1
     :param mutation_rate: Probability of mutation of each individual. 0 <= float <= 1
     :param elitism: How many best individuals are copied from previous generation to the new one. Note that the greater elitism is the fewer new individuals are created. 0 <= int <= population_size
+    :param terminate_on_stagnation_in_x_generations: For how many generations the population should stagnate to terminate. Can also be a float from interval (0, 1), in which case it is a part of number of generations.
     :param debug_stream: IO stream for debug statistics about population.
     
     :returns: The fittest individual in the last generation, and the number of generations.
@@ -34,10 +37,20 @@ def genetic_algorithm(individual_generator: Callable[[], Individual],
     assert 0 <= crossover_probability <= 1
     assert 0 <= mutation_rate <= 1
     assert 0 <= elitism <= population_size
+    if isinstance(terminate_on_stagnation_in_x_generations, float):
+        assert 0 < terminate_on_stagnation_in_x_generations < 1
+        terminate_on_stagnation_in_x_generations = ceil(number_of_generations * terminate_on_stagnation_in_x_generations)
+
+    if isinstance(terminate_on_stagnation_in_x_generations, int):
+        assert 0 < terminate_on_stagnation_in_x_generations <= number_of_generations
 
     i = 0
     population = Population([individual_generator() for _ in range(population_size)],
                             expected_elitism=elitism)
+
+    # Serves for termination on stagnation.
+    best = next(iter(population.get_elites()))
+    last_improvement = i
 
     try:
         for i in range(number_of_generations):
@@ -47,6 +60,15 @@ def genetic_algorithm(individual_generator: Callable[[], Individual],
             if debug_stream is not None:
                 fits = [individual.fitness() for individual in elites + selected]
                 debug_stream.write(f"{i},{min(fits)},{mean(fits)},{median(fits)},{max(fits)}\n")
+
+            if terminate_on_stagnation_in_x_generations is not None:
+                current_best = next(iter(population.get_elites()))
+                if current_best < best:
+                    best = current_best
+                    last_improvement = i
+
+                if i - last_improvement > terminate_on_stagnation_in_x_generations:
+                    break
 
             newborns = []
             if crossover_probability > 0:
