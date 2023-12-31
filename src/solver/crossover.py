@@ -16,7 +16,7 @@ def uniform_crossover(formula: WeightedCnf,
     offspring_a.from_config(a)
     offspring_b = Configuration(formula)
     offspring_b.from_config(b)
-    
+
     for variable in range(1, a._variable_cnt + 1):
         if choice([True, False]):
             offspring_a.set_variable(variable, b.evaluate_variable(variable))
