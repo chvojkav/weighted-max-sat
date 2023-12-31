@@ -1,11 +1,12 @@
 import random
 from copy import copy
-
+from .weighted_formula import WeightedCnf
 
 class Configuration:
     """Configuration that supports indexing with evaluated variables (signed integers)."""
-    def __init__(self, variable_cnt: int):
-        self._variable_cnt: int = variable_cnt
+    def __init__(self, formula: WeightedCnf):
+        self._formula = formula
+        self._variable_cnt: int = formula.variable_cnt
         self.variable_evaluation: list[int] = []
     
     def set_random(self):
@@ -25,6 +26,7 @@ class Configuration:
         self.variable_evaluation.pop() # Pop the final 0
     
     def from_config(self, other: "Configuration"):
+        self._formula = other._formula
         self._variable_cnt = other._variable_cnt
         self.variable_evaluation = copy(other.variable_evaluation)
 

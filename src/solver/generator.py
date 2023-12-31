@@ -12,7 +12,7 @@ class MwcnfGenerator:
         self.formula = formula
 
     def __call__(self) -> MwcnfIndividual:
-        config = Configuration(self.formula.variable_cnt)
+        config = Configuration(self.formula)
         config.set_random()
 
         return MwcnfIndividual(self.formula,

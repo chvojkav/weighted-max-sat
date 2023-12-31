@@ -9,14 +9,12 @@ crossover_strategy_t = Callable[[WeightedCnf, Configuration, Configuration],
                                 tuple[Configuration, Configuration]]
 
 
-def uniform_crossover(unused: WeightedCnf,
+def uniform_crossover(formula: WeightedCnf,
                       a: Configuration,
                       b: Configuration) -> tuple[Configuration, Configuration]:
-    _ = unused
-
-    offspring_a = Configuration(0)
+    offspring_a = Configuration(formula)
     offspring_a.from_config(a)
-    offspring_b = Configuration(0)
+    offspring_b = Configuration(formula)
     offspring_b.from_config(b)
     
     for variable in range(1, a._variable_cnt + 1):
