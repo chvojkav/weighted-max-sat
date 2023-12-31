@@ -31,10 +31,7 @@ def weigted_penalized_satisfied_clause_count(cnf: WeightedCnf, config: Configura
         if sat_literal_cnt != 0:
             sat_cnt += 1
 
-    weight_sum = 0
-    for i, weight in enumerate(cnf.weights, start=1):
-        if config.evaluate_variable(i):
-            weight_sum += weight
+    weight_sum = config.sat_weights_sum
 
     teoretical_max_weight = cnf.weights_sum
 
@@ -53,9 +50,6 @@ def weigted_penalized_satisfied_clause_count(cnf: WeightedCnf, config: Configura
 
 
 def weights(cnf: WeightedCnf, config: Configuration) -> float:
-    weight_sum = 0
-    for i, weight in enumerate(cnf.weights, start=1):
-        if config.evaluate_variable(i):
-            weight_sum += weight
+    weight_sum = config.sat_weights_sum
 
     return -weight_sum

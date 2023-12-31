@@ -9,13 +9,17 @@ class Configuration:
         self._variable_cnt: int = formula.variable_cnt
         self.variable_evaluation: list[int] = []
         self.counts_of_satisfied_literals: list[int] = []
+        self.sat_weights_sum: int = 0
 
     def set_random(self):
+        self.sat_weights_sum = 0
         self.variable_evaluation = [0]
         for i in range(self._variable_cnt):
             is_true = random.choice((True, False))
             evaluation = i + 1
-            if not is_true:
+            if is_true:
+                self.sat_weights_sum += self._formula.weights[i]
+            else:
                 evaluation *= -1
 
             self.variable_evaluation.append(evaluation)
@@ -39,19 +43,33 @@ class Configuration:
         self._variable_cnt = other._variable_cnt
         self.variable_evaluation = copy(other.variable_evaluation)
         self.counts_of_satisfied_literals = copy(other.counts_of_satisfied_literals)
+        self.sat_weights_sum = other.sat_weights_sum
 
     def set_variable(self, variable_name: int, value: bool):
-        new_val = abs(variable_name)
+        original_value = self.variable_evaluation[variable_name]
+        variable_name = abs(variable_name)
+        new_val = variable_name
         if not value:
             new_val *= -1
 
         self.variable_evaluation[variable_name] = new_val
         self.variable_evaluation[-variable_name] = new_val
+        if new_val != original_value:
+            self._update_sat_counts(variable_name)
+            if value:
+                self.sat_weights_sum += self._formula.weights[variable_name - 1]
+            else:
+                self.sat_weights_sum -= self._formula.weights[variable_name - 1]
 
     def flip_variable(self, variable_name: int):
+        was_true = self.variable_evaluation[variable_name] > 0
         self.variable_evaluation[variable_name] *= -1
         self.variable_evaluation[-variable_name] *= -1
         self._update_sat_counts(variable_name)
+        if was_true:
+            self.sat_weights_sum -= self._formula.weights[variable_name - 1]
+        else:
+            self.sat_weights_sum += self._formula.weights[variable_name - 1]
 
     def _update_sat_counts(self, variable_name: int):
         for clause, clause_index in self._formula.clauses_per_var[variable_name]:
