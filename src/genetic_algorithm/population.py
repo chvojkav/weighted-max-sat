@@ -6,7 +6,7 @@ from .individual import Individual
 class Population:
     def __init__(self,
                  individuals: Iterable[Individual],
-                 expected_elitism: int):
+                 expected_elitism: int = 0):
         self.individuals = list(individuals)
         self.expected_elitism = expected_elitism
         if expected_elitism in (0, 1):
