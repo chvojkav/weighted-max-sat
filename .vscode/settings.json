@@ -3,5 +3,12 @@
     "python.analysis.typeCheckingMode": "basic",
     "python.analysis.autoSearchPaths": true,
     "python.analysis.extraPaths": ["${workspaceFolder}/src"],
-    "terminal.integrated.env.linux": {"PYTHONPATH": "${workspaceFolder}/src"}
+    "terminal.integrated.env.linux": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+    },
+    "python.testing.pytestArgs": [
+        "."
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
 }
