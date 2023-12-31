@@ -46,7 +46,9 @@ Jaké jsou parametry genetického algoritmu?
 
 Elitismus zvolím pevně 1. To zajistí, že se z populace neztratí nejlepší jedinec. Vyšší elitismus zvyšuje selekční tlak, který bych rád řídil pouze jedním parametrem - velikost turnaje.
 
+
 1. Z ostatních parametrů genetického algoritmu udělám kombinace (viz tabulka TODO).
 2. Každou kombinaci parametrů použiji pro řešení jedné instance o velikostech 20-91, 36-157, 50-218, 75-325; 100x opakuji.
-3. Zahodím 
+3. Zahodím kombinace, které nenajdou řešení alespoň v 50% případů.
+4. TBD
 
