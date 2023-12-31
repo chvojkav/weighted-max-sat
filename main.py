@@ -12,17 +12,23 @@ def main():
     parser = ArgumentParser()
     parser.add_argument("--formula_file")
     parser.add_argument("--population_size",
-                        default=100)
+                        default=100,
+                        type=int)
     parser.add_argument("--generation_cnt",
-                        default=1000)
+                        default=1000,
+                        type=int)
     parser.add_argument("--tournament_size",
-                        default=1.75)
+                        default=1.75,
+                        type=float)
     parser.add_argument("--crossover_probability",
-                        default=0.9)
+                        default=0.9,
+                        type=float)
     parser.add_argument("--mutation_rate",
-                        default=0.03)
+                        default=0.03,
+                        type=float)
     parser.add_argument("--elitism",
-                        default=1)
+                        default=1,
+                        type=int)
     parser.add_argument("--debug_to_stderr",
                         action="store_true",
                         default=False)
