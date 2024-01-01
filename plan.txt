@@ -1,6 +1,6 @@
 Algorimtus a implementace:
 --------------------------
-Za jazyk jsem si zvolil python. Dobře se v něm orientuji, algoritmus mit tak půjde napsat a odladit rychle. Zároveň python obsahuje knihovny pro práci s daty a jejich vyhodnocování, a knihovny pro vykreslování grafů. 
+Za jazyk jsem si zvolil python. Dobře se v něm orientuji, algoritmus mit tak půjde napsat a odladit rychle. Zároveň python obsahuje knihovny pro práci s daty a jejich vyhodnocování, a knihovny pro vykreslování grafů.
 
 Naimplementoval jsem parser MWCNF formulí - src/mwcnf_parser a src/weighted_formula
 Naimplementoval jsem vlastní genetický algoritmus, který je obecně aplikovatelný - src/genetic_algorithm
@@ -12,7 +12,7 @@ Naimplementoval jsem vlastní genetický algoritmus, který je obecně aplikovat
     - jedinci se musejí umět zmutovat
 Naimplementoval jsem jedincům požadované strategie (mutace, křížení, etc.) pro genetický algoritmus - src/solver
 Vytvořil jsem CLI utilitu pro řešení MWCNF - main.py
-    potřebuje stále zadat hyperparametry a není tedy zase tak užitečná. 
+    potřebuje stále zadat hyperparametry a není tedy zase tak užitečná.
 
 Whitebox:
 ---------
@@ -27,6 +27,10 @@ Hledání fitness funkce:
 Tady jsem se trochu zasekl. Nemohl jsem přijít na robustní fitness funkci. Pak mi došlo, že aby heristika prioritizovala nalezení řešení před optimalizací vah, musejí mít váhy řádově menší významnost než počet splněných klauzulí. Rozhodl jsem se tedy naškálovat součet vah do intervalu <0;1>, dále jen adjusted_weight (= sum(váhy splněných proměnných) / sum(váhy všech proměnných)).
 
 6. maximalizece (počet splněných + adjusted_weight) - Tady už se daří konzistentně nacházet řešení i u instancí označených jako zavádějící. S touto fitness funkcí jsem spokojen. Daří se nalést alespoň nějaké řešení, a zároveň zohledňuje váhy při shodném počtu splněných klauzulí.
+
+
+Optimalizace výpočtu:
+- Můj algoritmus byl značně neefektivní, spousta věcí se počítala stále dokola. Před hledáním oprimálních parametrů genetického algoritmu, které čekám bude provádět výpočet hodněkrát dokola, jsem pomocí profileru nalezl nejslabší místa algoritmu a zoptimalizoval ho. Docílil jsem asi 8x zrychlení.
 
 Nalezení parametrů genetického algoritmu:
 Co chceme?
@@ -44,11 +48,33 @@ Jaké jsou parametry genetického algoritmu?
     5. Pravděpodobnost mutace
     6. Elitismus
 
-Elitismus zvolím pevně 1. To zajistí, že se z populace neztratí nejlepší jedinec. Vyšší elitismus zvyšuje selekční tlak, který bych rád řídil pouze jedním parametrem - velikost turnaje.
+Elitismus zvolím pevně 1. To zajistí, že se z populace neztratí nejlepší jedinec. Vyšší elitismus zvyšuje selekční tlak, který bych rád řídil jiným parametrem - velikost turnaje.
 
+1. Hraním si s hyperparametry a koukáním na grafy určím rozsahy hyperparametrů, které dávají dobrý smysl (Selekční tlak není moc vysoký; populace konverguje)
+    velikost turnaje        1.75    1.5     1.25    1.1
+    Pravděpodobnost křížení 0.9     0.5     0.1
+    Pravděpodobnost mutace  0.02    0.015   0.01    0.005
+2. Každou kombinaci parametrů použiji 10x pro řešení instancí o velikostech 20-91, s nastavením populace:
+    velikost populace       100     50
+    počet generací          200     100     50
+3. Pro každou kombinaci udělám průměr z běhů. Naleznu nejlepší kombinace parametrů, čím menší populace a počet generací, tím lepší.
+    (úspěšnost = avg( solved * weights ) kde solved je buď 1 nebo 0)
+    úspěšnost   turnaj  křížení mutace  populace    generace    konverguje
+    4649.4      1.1     0.9     0.02    100         200         ne
+    3945.6      1.5     0.9     0.01    100         50          ano
+    3865.3      1.25    0.9     0.02    100         200         ne
+    ....
+    Tady jsem zjistil, že pokud je velikost turnaje menší než 1.5 a pMutace 0.02, populace diverguje. Tyto kombinace parametrů jsem tedy vyloučil.
 
-1. Z ostatních parametrů genetického algoritmu udělám kombinace (viz tabulka TODO).
-2. Každou kombinaci parametrů použiji pro řešení jedné instance o velikostech 20-91, 36-157, 50-218, 75-325; 100x opakuji.
-3. Zahodím kombinace, které nenajdou řešení alespoň v 50% případů.
-4. TBD
-
+    úspěšnost   turnaj  křížení mutace  populace    generace    konverguje
+    3945.6      1.5     0.9     0.01    100         50          ano
+    3732.3      1.5     0.1     0.02    100         200         ano
+    3405.3      1.25    0.5     0.01    100         200         ano
+    3405.3      1.25    0.1     0.01    100         200         ano
+4. Vezmu nejlepší kombinace parametrů, ověřím, že s větším počtem generací dává stabilně řešení pro instance o testované velikosti.
+    úspěšnost   **  generace    úspěšnost
+    3945.6      **  500         44/90
+    3732.3      **  500         39/90
+    3405.3      **  500         37/90
+    3405.3      **  500         28/90
+Tady mi došlo, že jsem lepšího srovnání bych dosáhl, kdyby měly všechny běhy stejné velikosti populací a počty generací. Spustil jsem tedy faktorový návrh znovu. Tentokrát jsem dal menší mutace, ty dělaly největší problém.
