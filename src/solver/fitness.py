@@ -30,7 +30,7 @@ def weigted_penalized_satisfied_clause_count(cnf: WeightedCnf, config: Configura
         if sat_literal_cnt != 0:
             sat_cnt += 1
 
-    weighted_fitness = sat_cnt + config.sat_weights_sum / cnf.weights_sum
+    weighted_fitness = sat_cnt + (config.sat_weights_sum / cnf.weights_sum) * 0.9999
 
     # The algorithm is minimazing, so we need to return negative value.
     return -weighted_fitness
