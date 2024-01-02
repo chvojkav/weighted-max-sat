@@ -36,17 +36,17 @@ def main():
 
     formula_path = Path(args.formula_file)
     formula = parse_mwcnf(formula_path)
-    solution, i = genetic_algorithm(MwcnfGenerator(formula),
-                                    population_size=args.population_size,
-                                    number_of_generations=args.generation_cnt,
-                                    selection=TournamentSelection(args.tournament_size),
-                                    crossover_probability=args.crossover_probability,
-                                    mutation_rate=args.mutation_rate,
-                                    elitism=args.elitism,
-                                    debug_stream=stderr if args.debug_to_stderr else None)
+    solution, i, last_improvement = genetic_algorithm(MwcnfGenerator(formula),
+                                                    population_size=args.population_size,
+                                                    number_of_generations=args.generation_cnt,
+                                                    selection=TournamentSelection(args.tournament_size),
+                                                    crossover_probability=args.crossover_probability,
+                                                    mutation_rate=args.mutation_rate,
+                                                    elitism=args.elitism,
+                                                    debug_stream=stderr if args.debug_to_stderr else None)
 
     if isinstance(solution, MwcnfIndividual):
-        print(f"Number of generations: {i + 1}")
+        print(f"Number of generations: {i + 1}. Last improvement: {last_improvement + 1}.")
         print(f"Number satisfied: {-satisfied_clause_count(formula, solution.config)}")
         print(f"{formula_path.name} {-weights(formula, solution.config)} {solution.config.get_evaluation()} 0")
 

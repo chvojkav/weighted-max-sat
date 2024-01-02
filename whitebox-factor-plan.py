@@ -35,7 +35,7 @@ def thread_func(work_queue: Queue):
         debug_stream = StringIO()
         formula_path = Path(work.formula)
         formula = parse_mwcnf(formula_path)
-        solution, actual_generation_cnt = genetic_algorithm(MwcnfGenerator(formula),
+        solution, _, last_improvement  = genetic_algorithm(MwcnfGenerator(formula),
                                                             population_size=work.pop_size,
                                                             number_of_generations=work.gen_cnt,
                                                             selection=TournamentSelection(work.tour_size),
@@ -51,7 +51,7 @@ def thread_func(work_queue: Queue):
             clause_cnt = formula.clause_cnt
             sat_clause_cnt = -satisfied_clause_count(formula, solution.config)
             weight = -weights(formula, solution.config)
-            f.write(f"{formula_path.name},{work.run_no},{clause_cnt},{sat_clause_cnt},{weight},{work.pop_size},{work.gen_cnt},{work.tour_size},{work.cross},{work.mut}\n")
+            f.write(f"{formula_path.name},{work.run_no},{clause_cnt},{sat_clause_cnt},{weight},{last_improvement},{work.pop_size},{work.gen_cnt},{work.tour_size},{work.cross},{work.mut}\n")
 
 
 def main():
