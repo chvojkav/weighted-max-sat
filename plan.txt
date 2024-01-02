@@ -48,13 +48,15 @@ Jaké jsou parametry genetického algoritmu?
     5. Pravděpodobnost mutace
     6. Elitismus
 
+> Najdu dobré parametry pro malé instance. Pak vyzkouším, jak je potřeba zvedat velikost populace pro větší instance. Z toho utvořím nějaký vzoreček, který pak aplikuji.
+
 Elitismus zvolím pevně 1. To zajistí, že se z populace neztratí nejlepší jedinec. Vyšší elitismus zvyšuje selekční tlak, který bych rád řídil jiným parametrem - velikost turnaje.
 
 1. Hraním si s hyperparametry a koukáním na grafy určím rozsahy hyperparametrů, které dávají dobrý smysl (Selekční tlak není moc vysoký; populace konverguje)
     velikost turnaje        1.75    1.5     1.25    1.1
     Pravděpodobnost křížení 0.9     0.5     0.1
     Pravděpodobnost mutace  0.02    0.015   0.01    0.005
-2. Každou kombinaci parametrů použiji 10x pro řešení instancí o velikostech 20-91, s nastavením populace:
+2. Každou kombinaci parametrů použiji 10x pro řešení instancε o velikostι 20-91, s nastavením populace:
     velikost populace       100     50
     počet generací          200     100     50
 3. Pro každou kombinaci udělám průměr z běhů. Naleznu nejlepší kombinace parametrů, čím menší populace a počet generací, tím lepší.
@@ -72,9 +74,58 @@ Elitismus zvolím pevně 1. To zajistí, že se z populace neztratí nejlepší 
     3405.3      1.25    0.5     0.01    100         200         ano
     3405.3      1.25    0.1     0.01    100         200         ano
 4. Vezmu nejlepší kombinace parametrů, ověřím, že s větším počtem generací dává stabilně řešení pro instance o testované velikosti.
-    úspěšnost   **  generace    úspěšnost
+    úspěšnost   **  generace    úspěšnost nalezení řešení
     3945.6      **  500         44/90
     3732.3      **  500         39/90
     3405.3      **  500         37/90
     3405.3      **  500         28/90
-Tady mi došlo, že jsem lepšího srovnání bych dosáhl, kdyby měly všechny běhy stejné velikosti populací a počty generací. Spustil jsem tedy faktorový návrh znovu. Tentokrát jsem dal menší mutace, ty dělaly největší problém.
+5. Tady mi došlo, že lepšího srovnání bych dosáhl, kdyby měly všechny běhy stejné velikosti populací a počty generací. Spustil jsem tedy faktorový návrh znovu.
+    Tentokrát jsem dal menší mutace, ty dělaly potíže, populace nekonvergovaly.
+    Turnaje o velikosti 1.1 také často nekonvergovaly, také jsem je odebral.
+    Použil jsem instance o velikosti 36-157. Od větší instance si slibuji, že se bude parametrům s s malým selekčním tlakem méně dařit.
+    Používám 10 instancí, abych potlačil náhodnost z instancí (alespoň trochu).
+    Každou kombinaci také spustím 50x pro každou instanci.
+    Každou kombinaci tedy spustím 500x.
+
+    velikost turnaje        1.75    1.5     1.4    1.2
+    Pravděpodobnost křížení 0.9     0.5     0.1
+    Pravděpodobnost mutace  0.012   0.01    0.005
+    Velikost populace       150
+    Počet generací          500
+6. Udělal jsem průměr z běhů. Protože má každá instance jinou maximální váhu, definuji novou úspěšnost jako:
+    úspěšnost = avg( solved * weights/optimal_weights ) kde solved je buď 1 nebo 0
+    Dále definuji penalizované poslední zlepšaní (PPZ) jako:
+
+    PPZ = avg( (10 - solved*9) * last_improvement )
+    Chceme co největší úspěšnost a co nejmenší PPZ
+
+    úspěšnost   PPZ     turnaj  křížení mutace  konverguje
+    Nej v úspěšnosti
+    0.7906      452.86  1.2     0.9     0.012
+    0.7562      441.92  1.2     0.9     0.01
+    0.7100      619.20  1.2     0.5     0.012
+    Nej v PPZ
+    0.6542      210.23  1.75    0.9     0.012
+    0.6083      216.21  1.75    0.9     0.005
+    0.6489      233.33  1.75    0.9     0.01
+    Dobré v obojím
+    0.6858      277.41  1.4     0.9     0.012
+    0.6807      312.54  1.4     0.9     0.01
+    0.6578      313.77  1.5     0.9     0.12
+
+    Žádná kombinace nedominuje, zvolím tedy kombinaci, která je dobrá v obojím 1.4-0.9-0.012
+7. Nyní bych rád určil, jak je potřeba zvedat velikost populace pro větší instance. Zachovám tedy vybrané parametry "velikost turnaje", "p křížení!" a "p mutace", pro instance jiných velikostí budu pozorovat úspěšnost a PPZ.
+    Pro každou velikost 20, 36, 50, 75 a 100 proměnných vezmu 10 instancí, každou spustím 50x. Pozoruji.
+
+    úspěšnost   PPZ     velikost instance
+
+8. Pro můj program jsem tedy vybral následující hyperparametry:
+    velikost turnaje
+    Pravděpodobnost křížení
+    Pravděpodobnost mutace
+    Počet generací
+
+    Velikost populace v závislosti na velikosti instance:
+
+Blackbox fáze
+-------------
