@@ -32,7 +32,7 @@ def thread_func(work_queue: Queue):
         except Empty:
             break
 
-        debug_stream = StringIO()
+        # debug_stream = StringIO()
         formula_path = Path(work.formula)
         formula = parse_mwcnf(formula_path)
         solution, _, last_improvement  = genetic_algorithm(MwcnfGenerator(formula),
@@ -42,10 +42,11 @@ def thread_func(work_queue: Queue):
                                                             crossover_probability=work.cross,
                                                             mutation_rate=work.mut,
                                                             elitism=1,
-                                                            debug_stream=debug_stream)
+                                                            # debug_stream=debug_stream,
+                                                            terminate_on_stagnation_in_x_generations=0.999)
 
-        with open(Path(work.debug_output_file), mode="wt+") as f:
-            f.write(debug_stream.getvalue())
+        # with open(Path(work.debug_output_file), mode="wt+") as f:
+        #     f.write(debug_stream.getvalue())
 
         with open(work.stats_file, mode="at+") as f:
             clause_cnt = formula.clause_cnt
@@ -69,7 +70,7 @@ def main():
                                    run_no=run_no,
                                    pop_size=pop_size,
                                    gen_cnt=500,
-                                   tour_size=1.4,
+                                   tour_size=1.375,
                                    cross=0.9,
                                    mut=0.012,
                                    debug_output_file=f"out/{Path(instance).name}-{pop_size}-{run_no}",
@@ -83,6 +84,9 @@ def main():
         while not work_queue.empty():
             print(f"\rRemaining task count (approximate): {work_queue.qsize()}", end='')
             sleep(0.5)
+
+        for process in processes:
+            process.join()
     finally:
         print("\nTerminating...")
         # In case we get an exception (f.e. KeyboardInterrupt)
@@ -92,10 +96,11 @@ def main():
             except Empty:
                 break
 
-        sleep(3)
-
         for process in processes:
             process.terminate()
+
+        for process in processes:
+            process.join()
 
 if __name__ == '__main__':
     main()

@@ -1,0 +1,47 @@
+Executive summary
+-----------------
+
+
+Úvod
+----
+Tato zpráva jedná o blackbox fázi nasazení genetického algoritmu pro řešení weghted SAT problému. https://courses.fit.cvut.cz/NI-KOP/homeworks/files/task2.html
+
+Máme adaptabilní genetický algoritmus pro řešení weghted SAT problému.
+
+Otázka: funguje adaptační mechanismus uspokojivě? Resp. vyřeší algoritmus větší instance W-SAT problému bez potřeby interaktivního zásahu?
+
+
+Metody
+------
+Genetický algoritmus je napsaný v pythonu. Pseudokód:
+
+```
+population = generate_random_population()
+
+for number_of_generations:
+    elites = get_elites()
+    selected = select_fittest(population_size)
+
+    newborns = breed(elites + selected, crossover_probability)
+
+    mutants = mutate(selected + newborns + elites, mutation_rate)
+
+    population = Population(elites + selected + newborns + mutants)
+```
+
+Fitness kritérium: počet_splněných_klauzulí + (součet_splněných_vah / součet_všech_vah)
+
+Adaptační mechanismus:
+    - nastaví velikost populace v závislosti na velikosti instance podle rovnice:
+        populace = 150 * (1.1041 ^ (velikost_instance - 36)), ale minimálně 50
+    - nastaví velikost turnaje podle rovnice:
+        velikost_turnaje = 1.2 * (1.02988 ^ (populace / 150))
+
+Spustím solver 10x pro 10 instancí o velikostech 20, 36 a 50 proměnných, pro každý typ instance - M, N, Q, R. (400 běhů pro každou velikost)
+
+Výsledky
+--------
+
+
+Analýza a Diskuse
+-----------------
