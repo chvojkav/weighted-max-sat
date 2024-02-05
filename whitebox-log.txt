@@ -113,19 +113,28 @@ Elitismus zvolím pevně 1. To zajistí, že se z populace neztratí nejlepší 
     0.6807      312.54  1.4     0.9     0.01
     0.6578      313.77  1.5     0.9     0.12
 
-    Žádná kombinace nedominuje, zvolím tedy kombinaci, která je dobrá v obojím 1.4-0.9-0.012
+    Žádná kombinace nedominuje, zvolím tedy kombinaci, která má nejlepší úspěšnost 1.2-0.9-0.012
 7. Nyní bych rád určil, jak je potřeba zvedat velikost populace pro větší instance. Zachovám tedy vybrané parametry "velikost turnaje", "p křížení!" a "p mutace", pro instance jiných velikostí budu pozorovat úspěšnost a PPZ.
-    Pro každou velikost 20, 36, 50, 75 a 100 proměnných vezmu 10 instancí, každou spustím 50x. Pozoruji.
+    Vezmu 10 instancí velikosti 50 proměnných, a spustím je s velikostmi populace [600, 450, 300, 250, 200, 150, 100, 50]. Snažím se nalést velikost populace, která bude mít podobnou úspěšnost, jako populace 150 pro 36 proměnných.
 
-    úspěšnost   PPZ     velikost instance
+    velikost populace   úspěšnost
+    600                 0.2851
+    450                 0.2186
+    300                 0.2519
+    200                 0.1461
+    150                 0.1705
+    100                 0.1217
+    50                  0.1462
+
+Zdá se, že žádná zvolená velikost populace se úspěšností neblíží instancím s 36 proměnnými.
+Zkusím variantu, která byla úspěšná v obojím. 1.4-0.9-0.012 pro 600 jedinců.
+Zkusím ještě 1200 jedinců.
+
 
 8. Pro můj program jsem tedy vybral následující hyperparametry:
-    velikost turnaje
-    Pravděpodobnost křížení
-    Pravděpodobnost mutace
-    Počet generací
+    velikost turnaje        1.2
+    Pravděpodobnost křížení 0.9
+    Pravděpodobnost mutace  0.012
+    Počet generací          500
 
     Velikost populace v závislosti na velikosti instance:
-
-Blackbox fáze
--------------

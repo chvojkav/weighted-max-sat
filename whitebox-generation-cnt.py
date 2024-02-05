@@ -55,16 +55,11 @@ def thread_func(work_queue: Queue):
 
 
 def main():
-    THREAD_CNT = 50
-    INSTANCES = \
-        [f"wuf20-91/wuf20-91-Q/wuf20-0{i}.mwcnf" for i in range(1, 11)] + \
-        [f"wuf36-157/wruf36-157-Q/wruf36-157-{i}.mwcnf" for i in range(1, 11)] + \
-        [f"wuf50-218/wuf50-218-Q/wuf50-0{i}.mwcnf" for i in range(1, 11)] + \
-        [f"wuf75-325/wuf75-325-Q/wuf75-0{i}.mwcnf" for i in range(1, 11)] + \
-        [f"wuf100-430/wuf100-430-Q/wuf100-0{i}.mwcnf" for i in range(1, 11)]
-    POPULATIONS = [1000, 700, 550, 450, 350, 300, 250, 200, 150, 100, 50]
+    THREAD_CNT = 24
+    INSTANCES = [f"wuf50-218/wuf50-218-Q/wuf50-0{i}.mwcnf" for i in range(1, 11)]
+    POPULATIONS = [600]
     STATS_FILE = "out/stats.csv"
-    RUN_COUNT = 50
+    RUN_COUNT = 10
     Path("out").mkdir()
 
     work_queue = Queue()
@@ -73,7 +68,7 @@ def main():
         work_queue.put_nowait(Work(formula=instance,
                                    run_no=run_no,
                                    pop_size=pop_size,
-                                   gen_cnt=300,
+                                   gen_cnt=500,
                                    tour_size=1.4,
                                    cross=0.9,
                                    mut=0.012,
