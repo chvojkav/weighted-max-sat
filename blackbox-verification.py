@@ -33,11 +33,11 @@ def thread_func(work_queue: Queue):
             clause_cnt = formula.clause_cnt
             sat_clause_cnt = -satisfied_clause_count(formula, solution.config)
             weight = -weights(formula, solution.config)
-            f.write(f"{formula_path.name},{work.run_no},{clause_cnt},{sat_clause_cnt},{weight},{last_improvement}\n")
+            f.write(f"{formula_path.name},{work.run_no},{clause_cnt},{sat_clause_cnt},{weight},{formula.weights_sum},{last_improvement}\n")
 
 
 def main():
-    THREAD_CNT = 24
+    THREAD_CNT = 16
     INSTANCES = [f"wuf50-218/wuf50-218-Q/wuf50-0{i}.mwcnf" for i in range(67, 77)] + \
         [f"wuf50-218/wuf50-218-M/wuf50-0{i}.mwcnf" for i in range(67, 77)] + \
         [f"wuf50-218/wuf50-218-N/wuf50-0{i}.mwcnf" for i in range(67, 77)] + \

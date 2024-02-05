@@ -41,7 +41,28 @@ Spustím solver 10x pro 10 instancí o velikostech 20, 36 a 50 proměnných, pro
 
 Výsledky
 --------
+Zde uvedené výsledky jsou statistiky nad sadami instancí. Výsledky per instance jsou v příloze "blackbox-per-instance-stats.csv".
+
+legenda:
+úspěšnost - nalezl pravdivé ohodnocení formule
+w-úspěšnost - vážená úspěšnost - úspěšnost pronásobená tím, jak blízko se váhy proměnných přiblížili optimální váze
+poslední zlepšení - v jaké generaci došlo k poslednímu zlepšení. max 500
+penalizované poslední zlepšení - Pokud, nenalezl řešení, je penalizováno x10.
+
+průměry:
+proměnných  úspěšnost   w-úspěšnost poslední zlepšení   penalizované poslední zlepšení
+20          0.7375      0.4185       57.4875            137.9700
+36          0.3800      0.1901      103.8000            500.0250
+50          0.3850      0.2039      134.9599            668.7725
+
+směrodatné odchylky:
+proměnných  úspěšnost   w-úspěšnost poslední zlepšení   penalizované poslední zlepšení
+20          0.2537      0.3225      29.2778             125.0800
+36          0.2786      0.2159      30.4417             215.3238
+50          0.3539      0.2734      46.5038             369.3374
+
 
 
 Analýza a Diskuse
 -----------------
+
