@@ -1,14 +1,21 @@
 Executive summary
 -----------------
+Heuristika dosáhne pro relativně malé velikosti instancí (20-50) úspěšnosti okolo 40%, s tím, že nalezený součet vah je v průměru okolo poloviny optimální hodnoty.
+
+proměnných  úspěšnost   w-úspěšnost čas
+20          0.7375      0.4185      ~2s
+36          0.3800      0.1901      ~5s
+50          0.3850      0.2039      ~30s
 
 
 Úvod
 ----
-Tato zpráva jedná o blackbox fázi nasazení genetického algoritmu pro řešení weghted SAT problému. https://courses.fit.cvut.cz/NI-KOP/homeworks/files/task2.html
+Tato zpráva jedná o blackbox fázi nasazení genetického algoritmu pro řešení weighted SAT problému. https://courses.fit.cvut.cz/NI-KOP/homeworks/files/task2.html
 
-Máme adaptabilní genetický algoritmus pro řešení weghted SAT problému.
+Máme adaptabilní genetický algoritmus pro řešení weighted SAT problému.
 
-Otázka: funguje adaptační mechanismus uspokojivě? Resp. vyřeší algoritmus větší instance W-SAT problému bez potřeby interaktivního zásahu?
+Otázka: funguje adaptační mechanismus uspokojivě? Resp. vyřeší algoritmus větší instance (než 20 proměnných) W-SAT problému bez potřeby interaktivního zásahu?
+
 
 
 Metody
@@ -37,7 +44,12 @@ Adaptační mechanismus:
     - nastaví velikost turnaje podle rovnice:
         velikost_turnaje = 1.2 * (1.02988 ^ (populace / 150))
 
-Spustím solver 10x pro 10 instancí o velikostech 20, 36 a 50 proměnných, pro každý typ instance - M, N, Q, R. (400 běhů pro každou velikost)
+1. Spustím solver 10x pro 10 instancí o velikostech 20, 36 a 50 proměnných, pro každý typ instance - M, N, Q, R. (400 běhů pro každou velikost)
+2. Provedu statistiku "per instance", abych potlačil varianci randomizovaného algoritmu. Sbírám metriky úspěšnost, vážená úspěšnost, poslední zlepšení a penalizované poslední zlepšení
+3. Provedu statistiku "per sada instancí", instance stejné velikosti tvoří sady.
+
+poznámka: Jsem si vědom toho, že průměr z 10 běhů není zrovna přesvědčivý, ale moje implementace v pythonu není rychlá. Ani na poskytnutém výpočetním serveru není praktické ho provádět hodněkrát. Vyhradil jsem si i čas na optimalizaci implementace a povedlo si mi ji hodně zrychlit, na masové použití to ale nestačí. Ze stejnéo důvodu jsem pro blackbox fázi vynachal i velikosti instancí větší než 50 proměnných.
+
 
 Výsledky
 --------
@@ -62,7 +74,8 @@ proměnných  úspěšnost   w-úspěšnost poslední zlepšení   penalizované
 50          0.3539      0.2734      46.5038             369.3374
 
 
-
 Analýza a Diskuse
 -----------------
-
+Heuristika nemá ani pro relativné malé instance vysokou úspěšnost. Podle výsledků nalezne nějaké řešení instance větší než 20 proměnných s menší pravděpodobností než 40%. To, že je vážená úspěšnost poloviční ukazuje, že nalezené řešení nebývá to optimální.
+Celkem nízké (penalizované) poslední zlepšení poukazuje na to, že je možná moc vysoký selekční tlak. Bylo by dobré vrátit se do whitebox fáze a prozkoumat to.
+Heuristika je navíc pomalá (myšleno pro rozsáhlé prohledání prostoru hyperparametrů). Na vině jsou jednak moje volba jazyka - příště bych zvolil C++ -, druhak některá moje designová rozhodnutí - immutabilita jedinců, zbytečná univerzálnost rozhraní genetického algoritmu. V pozdější fázi whitebox fáze jsem zjistil, že pro větší instance zabírá křížení jedinců neúměrně velké množství času (70%), ale jeho vyřazení/změna by vyžadovali opětovné spuštění a vyhodnocení všech experimentů.
